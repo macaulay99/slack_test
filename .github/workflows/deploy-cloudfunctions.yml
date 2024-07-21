@@ -39,5 +39,5 @@ jobs:
               --entry-point=hello
               --trigger-http
               --no-allow-unauthenticated
-              --set-env-vars "SLACK_SIGNING_SECRET=${{ secrets.SLACK_SIGNING_SECRET }},SLACK_BOT_TOKEN=${{ SLACK_BOT_TOKEN }},GCP_PROJECT=${{ vars.PROJECT_ID }}"
+              --set-env-vars "SLACK_SIGNING_SECRET=${{ secrets.SLACK_SIGNING_SECRET }},SLACK_BOT_TOKEN=${{ secrets.SLACK_BOT_TOKEN }},GCP_PROJECT=${{ vars.PROJECT_ID }}"
               --run-service-account "my-service-account@aftergrow-3324.iam.gserviceaccount.com"
