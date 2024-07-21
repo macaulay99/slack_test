@@ -1,0 +1,42 @@
+name: Deploy Cloud Functions
+on:
+  # 手動ormainブランチにpush時に実行
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy-job:
+    runs-on: 'ubuntu-latest'
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+
+    steps:
+      # ソースコードのチェックアウトをする
+    - uses: 'actions/checkout@v3'
+
+    - id: 'auth'
+      name: 'Authenticate to Google Cloud'
+      # Workload Identity連携を利用してGitHub ActionsからGoogle Cloudへ認証を行う
+      uses: 'google-github-actions/auth@v1'
+      with:
+        workload_identity_provider: ${{ secrets.WORKLOAD_IDENTITY_PROVIDER_ID }}
+        service_account: my-service-account@aftergrow-3324.iam.gserviceaccount.com
+
+    - name: 'Set up Cloud SDK'
+      # gcloudコマンドを実行するためにCloud SDKを準備する
+      uses: 'google-github-actions/setup-gcloud@v1'
+
+      run: >-
+              gcloud functions deploy ${{ vars.CLOUD_FUNCTIONS_ID }}
+              --gen2
+              --runtime=python310
+              --region=asia-northeast1
+              --source=.
+              --entry-point=hello
+              --trigger-http
+              --no-allow-unauthenticated
+              --set-env-vars "SLACK_SIGNING_SECRET=${{ secrets.SLACK_SIGNING_SECRET }},SLACK_BOT_TOKEN=${{ SLACK_BOT_TOKEN }},GCP_PROJECT=${{ vars.PROJECT_ID }}"
+              --run-service-account "my-service-account@aftergrow-3324.iam.gserviceaccount.com"
