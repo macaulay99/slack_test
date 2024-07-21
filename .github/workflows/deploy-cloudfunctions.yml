@@ -28,7 +28,8 @@ jobs:
     - name: 'Set up Cloud SDK'
       # gcloudコマンドを実行するためにCloud SDKを準備する
       uses: 'google-github-actions/setup-gcloud@v1'
-
+    # Cloud Functionsをデプロイする
+    - name: 'Deploy Cloud Functions'
       run: >-
               gcloud functions deploy ${{ vars.CLOUD_FUNCTIONS_ID }}
               --gen2
